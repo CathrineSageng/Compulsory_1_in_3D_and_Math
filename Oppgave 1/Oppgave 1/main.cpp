@@ -6,7 +6,7 @@
 using namespace std;
 
 //Generates 100 vertices (points on the graph) of the mathematical function x^2
-const int numberOfVertices = 100;
+const int numberOfVertices = 41;
 
 //Is a string literal that contains the source code for a vertex shader. 
 const char* vertexShaderSource = 
@@ -45,7 +45,7 @@ double function( const double x)
 double differenceQuotient(double x)
 {
     //Calculates the Newtons quotient
-    const double h = 0.001;
+    double h = 0.01;
     return (function(x + h) - function(x)) / h;
 }
 
@@ -110,53 +110,112 @@ int main(void)
     // Opens the text file for writing
     ofstream file("Data.txt");
 
-    // Kompiler shaderne
-    GLuint vertexShader, fragmentShader, shaderProgram;
+    // Declares tree variables 
+    unsigned int vertexShader, fragmentShader, shaderProgram;
+    //Creates a vertex shader object and the variable 'vertexShader' is assigned to the vartex shader object. 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    //Sets the source code of the shader. vertexshader is the indentifier of the vertex shader to which are assigning the source code. 
+    //1 is number of strings in the vertexShaderSource array. 
+    //&vertexShaderSource is the pointer to a string containing the vertex shader source. 
+    //0- the source code is null terminated. 
+    glShaderSource(vertexShader, 1, &vertexShaderSource, 0);
+    //Compiles the shader code associated with the specified shader object. 
     glCompileShader(vertexShader);
+    //Checks for compilation errors. 
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, 0, infoLog);
+        cout << "Failed to compile the vertex shader" << infoLog << endl;
+    }
 
+    //The three lines of code below assignes the 'fragmentShader' variable the identifier for the compiled fragment shader object. 
+    //Creates a fragment shader object and the variable 'fragmentShader' is assigned to the fragment shader object.
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0);
     glCompileShader(fragmentShader);
+    //Checks for compilation errors. 
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, 0, infoLog);
+        cout << "Failed to compile the fragment shader" << infoLog << endl;
+    }
 
-    // Koble shaderne til et shaderprogram
+    //Here we create a shader program. Attaching the compiled vertex shader and fragment shader, linking the program
+    //and activates it for use in rendering. 
+    //The shaderProgram variable has assigned the newly created shader program object. 
     shaderProgram = glCreateProgram();
+    //The two functions below attaches the 'vertexShader' and the 'fragmentshader' to the shader program. 
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
+    //Links the shaders attached to the shader program. 
     glLinkProgram(shaderProgram);
+    //Checks for linking errors. 
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, 0, infoLog);
+        cout << "Failed to link the shader program" << infoLog << endl;
+    }
+    //Activates the shader program for rendering. 
     glUseProgram(shaderProgram);
 
-    // Slett shaderobjektene når de ikke lenger er nødvendige
+    //Here we delete the individual shader objects after they have been attached and linked to the shader program. 
+    //The shader program retains a reference to the compiled code, so deleting the shader objects do not affect the shader program. 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // Generer verteksdata og indeksdata
-    float vertices[numberOfVertices * 5];  // (x, y, r, g, b)
+    //'vertices' is an array used to store vertex data. The size of the array is the 'numberOfVertices' that in this case is set 
+    //to 100 multiplied with 5 (the values x, y, r, g, b)
+    float vertices[numberOfVertices * 5];
+    //An array where each element represents an index that refers to a vertex. 
+    //Are used to define the order in which the vertices schould be drawn. 
     int indices[numberOfVertices];
 
-    double prev_y = function(a);
-    for (int i = 0; i < numberOfVertices; ++i) {
+    //Calls the function x^2 with the parameter 'a'(the start of the definition quantity)
+    double startingPoint = function(a);
+
+    //The for loop calculates a range of values to calculate the x,y and the derïvative at each step. 
+    for (int i = 0; i < numberOfVertices; ++i) 
+    {
+        //Calculates the x value for the current iteration 
         double x = a + i * h;
+        //Calulates the y value for the current iteration 
         double y = function(x);
-        double deriv = differenceQuotient(x);
-
+        //Calculates the Newton's quotient at the current x value
+        double derivative = differenceQuotient(x);
+        //Assigns the x-coordinate value converted to a float to the first position in the 'vertices' array 
         vertices[i * 5] = static_cast<float>(x);
+        //Assigns the y-coordinate value converted to a float to the second position in the 'vertices' array 
         vertices[i * 5 + 1] = static_cast<float>(y);
-        vertices[i * 5 + 2] = (y > prev_y) ? 0.0f : 1.0f;  // R
-        vertices[i * 5 + 3] = (y > prev_y) ? 1.0f : 0.0f;  // G
-        vertices[i * 5 + 4] = 0.0f;  // B
+        //A boolean expression. If y is less than or equal to the starting point the result is 1,0f.
+        //The result is assigned to the red component position in the vertices array 
+        vertices[i * 5 + 2] = static_cast<float>(y <= startingPoint);  // Red
+        //A boolean expression. If y is greater than or the starting point the result is 1,0f.
+        //The result is assigned to the green component position in the vertices array 
+        vertices[i * 5 + 3] = static_cast<float>(y > startingPoint);   // Green
+        //The blue component is alwaya 0.0f
+        vertices[i * 5 + 4] = 0.0f;  // Blue
 
-        prev_y = y;
+        //Updates the startingPoint variable. 
+        startingPoint = y;
+        //Assigns the current value of 'i' in the 'i'-th element.
         indices[i] = i;
 
-        file << x << " " << y << " " << deriv << std::endl;
+        //Writes information about the current values of x, y, and derivative to the output file 
+        file << "x: "<< x << " y: " << y << " Derivative: " << derivative << endl;
     }
 
-    // Opprett VAO, VBO og EBO
-    GLuint VAO, VBO, EBO;
+    unsigned int VAO, VBO, EBO;
+    //Generates one vertex array object and assigns its ID to the variable VAO
+    //VAO specify how vertex data is organized and accessed.
     glGenVertexArrays(1, &VAO);
+    //Generates one vertex buffer object and assigns its ID to the variable VBO.
+    //VBO is used to store vertex coordinates, color, normals and other attributes. 
     glGenBuffers(1, &VBO);
+    //Generates one element buffer object and assigns its ID to the variable EBO.
+    //Is used for indexed rendering. 
     glGenBuffers(1, &EBO);
 
     // Bind VAO
