@@ -1,41 +1,42 @@
-x: -2 y: 4 Derivative: -3.99
-x: -1.9 y: 3.61 Derivative: -3.79
-x: -1.8 y: 3.24 Derivative: -3.59
-x: -1.7 y: 2.89 Derivative: -3.39
-x: -1.6 y: 2.56 Derivative: -3.19
-x: -1.5 y: 2.25 Derivative: -2.99
-x: -1.4 y: 1.96 Derivative: -2.79
-x: -1.3 y: 1.69 Derivative: -2.59
-x: -1.2 y: 1.44 Derivative: -2.39
-x: -1.1 y: 1.21 Derivative: -2.19
-x: -1 y: 1 Derivative: -1.99
-x: -0.9 y: 0.81 Derivative: -1.79
-x: -0.8 y: 0.64 Derivative: -1.59
-x: -0.7 y: 0.49 Derivative: -1.39
-x: -0.6 y: 0.36 Derivative: -1.19
-x: -0.5 y: 0.25 Derivative: -0.99
-x: -0.4 y: 0.16 Derivative: -0.79
-x: -0.3 y: 0.09 Derivative: -0.59
-x: -0.2 y: 0.04 Derivative: -0.39
-x: -0.1 y: 0.01 Derivative: -0.19
-x: 0 y: 0 Derivative: 0.01
-x: 0.1 y: 0.01 Derivative: 0.21
-x: 0.2 y: 0.04 Derivative: 0.41
-x: 0.3 y: 0.09 Derivative: 0.61
-x: 0.4 y: 0.16 Derivative: 0.81
-x: 0.5 y: 0.25 Derivative: 1.01
-x: 0.6 y: 0.36 Derivative: 1.21
-x: 0.7 y: 0.49 Derivative: 1.41
-x: 0.8 y: 0.64 Derivative: 1.61
-x: 0.9 y: 0.81 Derivative: 1.81
-x: 1 y: 1 Derivative: 2.01
-x: 1.1 y: 1.21 Derivative: 2.21
-x: 1.2 y: 1.44 Derivative: 2.41
-x: 1.3 y: 1.69 Derivative: 2.61
-x: 1.4 y: 1.96 Derivative: 2.81
-x: 1.5 y: 2.25 Derivative: 3.01
-x: 1.6 y: 2.56 Derivative: 3.21
-x: 1.7 y: 2.89 Derivative: 3.41
-x: 1.8 y: 3.24 Derivative: 3.61
-x: 1.9 y: 3.61 Derivative: 3.81
-x: 2 y: 4 Derivative: 4.01
+41
+x: -2 y: 4 Derivative: -3.99 Color: 1 0 0
+x: -1.9 y: 3.61 Derivative: -3.79 Color: 1 0 0
+x: -1.8 y: 3.24 Derivative: -3.59 Color: 1 0 0
+x: -1.7 y: 2.89 Derivative: -3.39 Color: 1 0 0
+x: -1.6 y: 2.56 Derivative: -3.19 Color: 1 0 0
+x: -1.5 y: 2.25 Derivative: -2.99 Color: 1 0 0
+x: -1.4 y: 1.96 Derivative: -2.79 Color: 1 0 0
+x: -1.3 y: 1.69 Derivative: -2.59 Color: 1 0 0
+x: -1.2 y: 1.44 Derivative: -2.39 Color: 1 0 0
+x: -1.1 y: 1.21 Derivative: -2.19 Color: 1 0 0
+x: -1 y: 1 Derivative: -1.99 Color: 1 0 0
+x: -0.9 y: 0.81 Derivative: -1.79 Color: 1 0 0
+x: -0.8 y: 0.64 Derivative: -1.59 Color: 1 0 0
+x: -0.7 y: 0.49 Derivative: -1.39 Color: 1 0 0
+x: -0.6 y: 0.36 Derivative: -1.19 Color: 1 0 0
+x: -0.5 y: 0.25 Derivative: -0.99 Color: 1 0 0
+x: -0.4 y: 0.16 Derivative: -0.79 Color: 1 0 0
+x: -0.3 y: 0.09 Derivative: -0.59 Color: 1 0 0
+x: -0.2 y: 0.04 Derivative: -0.39 Color: 1 0 0
+x: -0.1 y: 0.01 Derivative: -0.19 Color: 1 0 0
+x: 0 y: 0 Derivative: 0.01 Color: 1 0 0
+x: 0.1 y: 0.01 Derivative: 0.21 Color: 0 1 0
+x: 0.2 y: 0.04 Derivative: 0.41 Color: 0 1 0
+x: 0.3 y: 0.09 Derivative: 0.61 Color: 0 1 0
+x: 0.4 y: 0.16 Derivative: 0.81 Color: 0 1 0
+x: 0.5 y: 0.25 Derivative: 1.01 Color: 0 1 0
+x: 0.6 y: 0.36 Derivative: 1.21 Color: 0 1 0
+x: 0.7 y: 0.49 Derivative: 1.41 Color: 0 1 0
+x: 0.8 y: 0.64 Derivative: 1.61 Color: 0 1 0
+x: 0.9 y: 0.81 Derivative: 1.81 Color: 0 1 0
+x: 1 y: 1 Derivative: 2.01 Color: 0 1 0
+x: 1.1 y: 1.21 Derivative: 2.21 Color: 0 1 0
+x: 1.2 y: 1.44 Derivative: 2.41 Color: 0 1 0
+x: 1.3 y: 1.69 Derivative: 2.61 Color: 0 1 0
+x: 1.4 y: 1.96 Derivative: 2.81 Color: 0 1 0
+x: 1.5 y: 2.25 Derivative: 3.01 Color: 0 1 0
+x: 1.6 y: 2.56 Derivative: 3.21 Color: 0 1 0
+x: 1.7 y: 2.89 Derivative: 3.41 Color: 0 1 0
+x: 1.8 y: 3.24 Derivative: 3.61 Color: 0 1 0
+x: 1.9 y: 3.61 Derivative: 3.81 Color: 0 1 0
+x: 2 y: 4 Derivative: 4.01 Color: 0 1 0

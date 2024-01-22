@@ -176,6 +176,8 @@ int main(void)
     //Calls the function x^2 with the parameter 'a'(the start of the definition quantity)
     double startingPoint = function(a);
 
+    file << numberOfVertices << endl;
+
     //The for loop calculates a range of values to calculate the x,y and the derïvative at each step. 
     for (int i = 0; i < numberOfVertices; ++i) 
     {
@@ -204,7 +206,8 @@ int main(void)
         indices[i] = i;
 
         //Writes information about the current values of x, y, and derivative to the output file 
-        file << "x: "<< x << " y: " << y << " Derivative: " << derivative << endl;
+        file << "x: " << vertices[i*5] << " y: " << vertices[i*5+1] << " Derivative: " << derivative 
+            << " Color: " << vertices[i * 5 + 2] << " " << vertices[i * 5 + 3] << " " << vertices[i * 5 + 4] << endl;
     }
 
     unsigned int VAO, VBO, EBO;
@@ -218,22 +221,28 @@ int main(void)
     //Is used for indexed rendering. 
     glGenBuffers(1, &EBO);
 
-    // Bind VAO
+    
     glBindVertexArray(VAO);
 
-    // Kopier verteksdata til VBO
+    // Binds VBO to the GL_ARRAY_BUFFER target
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //Allocates memory for the VBO and fills it with data. Specifies the size of the data with a 
+    //static draw that will not be changed frequently. 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // Kopier indeksdata til EBO
+    // Binds the EBO to the GL_BUFFER_DATA target. 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //Allicates memory for the EBO and fills it with data. Specifies the size of the data with a 
+    //static draw that will not be changed frequently. 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // Spesifiser attributtene til verteksen
+    // Specifies the attributes to a vertex. The parameters are the location, size of the attributes (x and y), 
+    //that the x and y values are float, false for normalization, byte offset and offset of where the x and y 
+    //values is in the array. 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Spesifiser attributtene til fargen
+    //Same for color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -248,6 +257,7 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        //Escape key closes the program 
         processInput(window);
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -255,7 +265,8 @@ int main(void)
         // Bind VAO
         glBindVertexArray(VAO);
 
-        // Tegn grafen
+        //GL_LINE STRIP draws a sequence of line regments, then how many vertices to be rendered, 
+        //the values in the index array and the offset into the index array, here the array starts from 0.
         glDrawElements(GL_LINE_STRIP, numberOfVertices, GL_UNSIGNED_INT, 0);
 
         // Unbind VAO
@@ -268,7 +279,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    // Rydd opp og avslutt
+    // Cleans up and stops the program
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
