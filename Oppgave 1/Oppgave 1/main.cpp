@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 using namespace std;
 
-//Generates 100 vertices (points on the graph) of the mathematical function x^2
+//Generates 41 vertices (points on the graph) of the mathematical function x^2
 const int numberOfVertices = 41;
 
 //Is a string literal that contains the source code for a vertex shader. 
@@ -36,18 +36,8 @@ const char* fragmentShaderSource =
 "    FragColor = vec4(ourColor, 1.0);\n"
 "}\0";
 
-// Function f(x)= x^2
-double function( const double x)
-{
-    return pow(x, 2);
-}
-
-double differenceQuotient(double x)
-{
-    //Calculates the Newtons quotient
-    double h = 0.01;
-    return (function(x + h) - function(x)) / h;
-}
+double function(const double x);
+double differenceQuotient(double x);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -306,3 +296,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     cout << "The window size is: " << width << " x " << height << endl;
 }
 
+// Function f(x)= x^2
+double function(const double x)
+{
+    return pow(x, 2);
+}
+
+double differenceQuotient(double x)
+{
+    //Calculates the Newtons quotient
+    double h = 0.01;
+    return (function(x + h) - function(x)) / h;
+}

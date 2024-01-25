@@ -135,10 +135,10 @@ int main() {
     
         processInput(window);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_LINE_STRIP, 0, verticesPositions.size() / 3);
+        glDrawArrays(GL_LINE_STRIP, 0, verticesPositions.size()/3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -178,30 +178,36 @@ void Spiral()
      int numberOfDataPoints = 50;
     for (int i = 0; i < numberOfDataPoints; ++i) 
     {
-        //
+        //t is used to control the position along the spiral 
+        //Converts the loop variable 'i' from int to float with casting operation 
         float t = static_cast<float>(i) / numberOfDataPoints * 10.0f;
 
-        // Parametriske ligninger for spiralens posisjon
+        //cos(t) and sin(t) are trigonometric functions. They create circular motions along the 
+        //x- axis and y- axis 
         float x = a * t * cos(t);
         float y = a * t * sin(t);
+        //Decides the height of the circle in the spiral and increase along the x-axis
         float z = b * t;
 
-        // Legg til datapunktene i vektoren
+        //These three lines are used to store the calculated values of x,y and z in the end of the vector
         verticesPositions.push_back(x);
         verticesPositions.push_back(y);
         verticesPositions.push_back(z);
 
-        // Velg farger basert på parameterverdien t
+        //The color value to red varies from 0 to 1 were the loop variable 1 is 
+        //divided by numberOfDataPoints. 
+        //These tree calculations creates gradient colors 
         float red = static_cast<float>(i) / numberOfDataPoints;
-        float green = 1.0f - red;
+        float green = 0.5f - red;
         float blue = 1.0f;
 
+        //These three lines are used to store the calculated values for r, g, b and put in the end of the vector
         spiralColors.push_back(red);
         spiralColors.push_back(green);
         spiralColors.push_back(blue);
         
         file << "x: "<< x << " y: "<< y <<" z: " << z << " r: "
-        << red<< " b: "<< green << " b: " << blue <<endl;
+        << red<< " g: "<< green << " b: " << blue <<endl;
     }
 }
 
