@@ -1,12 +1,32 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include<vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 using namespace std;
 
-//Generates 41 vertices (points on the graph) of the mathematical function x^2
-const int numberOfVertices = 41;
+//Stores the coordinates x, y
+vector<float> verticesPositions;
+//Stores the color coordinates for every single vertex 
+vector<float> spiralColors;
+//Stores the results of the derivative
+vector<float> derivativeResults;
+
+int numberOfDataPoints = 41;
+
+//Definition quantity
+double a = -2.0; //The start of the definition quantity
+double b = 2.0; //The end of the definition quantitity 
+
+//Intervals n+1
+int n = 40;
+
+//Calculates the dissolution of h
+double h = (b - a) / n;
+
+// Opens the text file for writing
+ofstream file("Data.txt");
 
 //Is a string literal that contains the source code for a vertex shader. 
 const char* vertexShaderSource = 
@@ -36,11 +56,12 @@ const char* fragmentShaderSource =
 "    FragColor = vec4(ourColor, 1.0);\n"
 "}\0";
 
-double function(const double x);
-double differenceQuotient(double x);
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+
+double function(const double x);
+double differenceQuotient(double x);
+void function();
 
 int main(void)
 {
@@ -55,7 +76,6 @@ int main(void)
         return -1;
     }
       
-
     //Specifies that the major and minor version of OpenGL is 3,3. 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -86,19 +106,6 @@ int main(void)
     glViewport(0, 0, 800, 600);
     //This function is called automatecally when the window is resized. 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    //Definition quantity
-    double a = -2.0; //The start of the definition quantity
-    double b = 2.0; //The end of the definition quantitity 
-    
-    //Intervals n+1
-    int n = 40;
-
-    //Calculates the dissolution of h
-    double h = (b - a) / n;
-
-    // Opens the text file for writing
-    ofstream file("Data.txt");
 
     // Declares tree variables 
     unsigned int vertexShader, fragmentShader, shaderProgram;
@@ -156,88 +163,28 @@ int main(void)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    //'vertices' is an array used to store vertex data. The size of the array is the 'numberOfVertices' that in this case is set 
-    //to 100 multiplied with 5 (the values x, y, r, g, b)
-    float vertices[numberOfVertices * 5];
-    //An array where each element represents an index that refers to a vertex. 
-    //Are used to define the order in which the vertices schould be drawn. 
-    int indices[numberOfVertices];
+    function();
 
-    //Calls the function x^2 with the parameter 'a'(the start of the definition quantity)
-    double startingPoint = function(a);
-
-    file << numberOfVertices << endl;
-
-    //The for loop calculates a range of values to calculate the x,y and the derivative at each step. 
-    for (int i = 0; i < numberOfVertices; ++i) 
-    {
-        //Calculates the x value for the current iteration 
-        double x = a + i * h;
-        //Calulates the y value for the current iteration 
-        double y = function(x);
-        //Calculates the Newton's quotient at the current x value
-        double derivative = differenceQuotient(x);
-        //Assigns the x-coordinate value converted to a float to the first position in the 'vertices' array 
-        vertices[i * 5] = static_cast<float>(x);
-        //Assigns the y-coordinate value converted to a float to the second position in the 'vertices' array 
-        vertices[i * 5 + 1] = static_cast<float>(y);
-        //A boolean expression. If y is less than or equal to the starting point the result is 1,0f.
-        //The result is assigned to the red component position in the vertices array 
-        vertices[i * 5 + 2] = static_cast<float>(y <= startingPoint);  // Red
-        //A boolean expression. If y is greater than or the starting point the result is 1,0f.
-        //The result is assigned to the green component position in the vertices array 
-        vertices[i * 5 + 3] = static_cast<float>(y > startingPoint);   // Green
-        //The blue component is alwaya 0.0f
-        vertices[i * 5 + 4] = 0.0f;  // Blue
-
-        //Updates the startingPoint variable. 
-        startingPoint = y;
-        //Assigns the current value of 'i' in the 'i'-th element.
-        indices[i] = i;
-
-        //Writes information about the current values of x, y, and derivative to the output file 
-        file << "x: " << vertices[i*5] << " y: " << vertices[i*5+1] << " Derivative: " << derivative 
-            << " Color: " << vertices[i * 5 + 2] << " " << vertices[i * 5 + 3] << " " << vertices[i * 5 + 4] << endl;
-    }
-
-    unsigned int VAO, VBO, EBO;
-    //Generates one vertex array object and assigns its ID to the variable VAO
-    //VAO specify how vertex data is organized and accessed.
+    //Creates a VAO and binds it 
+    unsigned int VAO;
     glGenVertexArrays(1, &VAO);
-    //Generates one vertex buffer object and assigns its ID to the variable VBO.
-    //VBO is used to store vertex coordinates, color, normals and other attributes. 
-    glGenBuffers(1, &VBO);
-    //Generates one element buffer object and assigns its ID to the variable EBO.
-    //Is used for indexed rendering. 
-    glGenBuffers(1, &EBO);
-
-    
     glBindVertexArray(VAO);
 
-    // Binds VBO to the GL_ARRAY_BUFFER target
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //Allocates memory for the VBO and fills it with data. Specifies the size of the data with a 
-    //static draw that will not be changed frequently. 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //Creates a VBO for the position and color to the graph
+    unsigned int VBO[2];
+    glGenBuffers(2, VBO);
 
-    // Binds the EBO to the GL_BUFFER_DATA target. 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //Allicates memory for the EBO and fills it with data. Specifies the size of the data with a 
-    //static draw that will not be changed frequently. 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // Specifies the attributes to a vertex. The parameters are the location, size of the attributes (x and y), 
-    //that the x and y values are float, false for normalization, byte offset and offset of where the x and y 
-    //values is in the array. 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    //Copies the x and y position to the graph to VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, verticesPositions.size() * sizeof(float), verticesPositions.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Same for color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    //Copies the color data for the graph to the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, spiralColors.size() * sizeof(float), spiralColors.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-
-    // Unbind VAO
-    glBindVertexArray(0);
 
     //Closes the text file
     file.close();
@@ -255,9 +202,7 @@ int main(void)
         // Bind VAO
         glBindVertexArray(VAO);
 
-        //GL_LINE STRIP draws a sequence of line regments, then how many vertices to be rendered, 
-        //the values in the index array and the offset into the index array, here the array starts from 0.
-        glDrawElements(GL_LINE_STRIP, numberOfVertices, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_LINE_STRIP, 0, numberOfDataPoints);
 
         // Unbind VAO
         glBindVertexArray(0);
@@ -271,8 +216,7 @@ int main(void)
 
     // Cleans up and stops the program
     glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(2, VBO);
     glDeleteProgram(shaderProgram);
 
     glfwTerminate();
@@ -307,4 +251,42 @@ double differenceQuotient(double x)
     //Calculates the Newtons quotient
     double h = 0.01;
     return (function(x + h) - function(x)) / h;
+}
+
+void function()
+{
+    for (int i = 0; i < numberOfDataPoints; ++i)
+    {   
+        double x = a + i * h;
+        double y = function(x);
+        double derivative = differenceQuotient(x);
+
+        //The two first lines stores the coordinates for x anf y. 
+        //The third line stores the derivative for each vertex 
+        verticesPositions.push_back(x);
+        verticesPositions.push_back(y);
+        derivativeResults.push_back(derivative);
+
+        float red, green, blue;
+        if (derivative > 0) {
+            //If derivative is greater than 0, the vertex color is green 
+            red = 0.0f;
+            green = 1.0f;
+            blue = 0.0f;
+        }
+        else {
+            //If the derivative is below 0, the vertex color is red. 
+            red = 1.0f;
+            green = 0.0f;
+            blue = 0.0f;
+        }
+
+        //These three lines are used to store the calculated values for r, g, b and put in the end of the vector
+        spiralColors.push_back(red);
+        spiralColors.push_back(green);
+        spiralColors.push_back(blue);
+
+        file << "x: " << x << " y: " << " derivative: " << derivative << y << " r: "
+            << red << " g: " << green << " b: " << blue << endl;
+    }
 }

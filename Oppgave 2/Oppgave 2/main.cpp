@@ -5,8 +5,6 @@
 #include <cmath>
 #include <fstream>
 
-//https://www.overleaf.com/project/65af96afd34739496ebf18ec
-
 using namespace std;
 
 //Parameters that are used to define the shape of the spiral 
@@ -113,19 +111,24 @@ int main() {
 
     Spiral();
 
-    unsigned int VAO, VBO, EBO;
+    //Creates a VAO and binds it 
+    unsigned int VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //Creates a VBO for the position and color to the graph
+    unsigned int VBO[2];
+    glGenBuffers(2, VBO);
+
+    //Copies the x and y position to the graph to VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, verticesPositions.size() * sizeof(float), verticesPositions.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, spiralColors.size() * sizeof(float), spiralColors.data(), GL_STATIC_DRAW);
+    //Copies the color data for the graph to the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, spiralColors.size() * sizeof(float), spiralColors.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
 
@@ -141,14 +144,13 @@ int main() {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_LINE_STRIP, 0, verticesPositions.size()/3);
-
+     
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(2, VBO);
     glDeleteProgram(shaderProgram);
 
     glfwTerminate();
