@@ -90,7 +90,7 @@ int main(void)
     //Definition quantity
     double a = -2.0; //The start of the definition quantity
     double b = 2.0; //The end of the definition quantitity 
-
+    
     //Intervals n+1
     int n = 40;
 
@@ -168,7 +168,7 @@ int main(void)
 
     file << numberOfVertices << endl;
 
-    //The for loop calculates a range of values to calculate the x,y and the derïvative at each step. 
+    //The for loop calculates a range of values to calculate the x,y and the derivative at each step. 
     for (int i = 0; i < numberOfVertices; ++i) 
     {
         //Calculates the x value for the current iteration 
