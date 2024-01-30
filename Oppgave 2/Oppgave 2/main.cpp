@@ -116,7 +116,7 @@ int main() {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    //Creates a VBO for the position and color to the graph
+    //Creates two VBO for the position and color to the graph
     unsigned int VBO[2];
     glGenBuffers(2, VBO);
 

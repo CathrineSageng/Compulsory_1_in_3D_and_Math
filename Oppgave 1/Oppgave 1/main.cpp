@@ -9,7 +9,7 @@ using namespace std;
 //Stores the coordinates x, y
 vector<float> verticesPositions;
 //Stores the color coordinates for every single vertex 
-vector<float> spiralColors;
+vector<float> colors;
 //Stores the results of the derivative
 vector<float> derivativeResults;
 
@@ -38,7 +38,7 @@ const char* vertexShaderSource =
 " layout (location = 1) in vec3 aColor;\n"
 //A variable called ourColor that will be used to pass color information from the vertex shader to the fragment shader. 
 " out vec3 ourColor;\n"
-//Calculates the final position of the vetex and assigns color to the vertex 
+//Calculates the final position of the vertex and assigns color to the vertex 
 "void main() {\n"
 "    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
 "    ourColor = aColor;\n"
@@ -59,9 +59,9 @@ const char* fragmentShaderSource =
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
-double function(const double x);
+double function(double x);
 double differenceQuotient(double x);
-void function();
+void calculatefunction();
 
 int main(void)
 {
@@ -107,7 +107,7 @@ int main(void)
     //This function is called automatecally when the window is resized. 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Declares tree variables 
+    // Declares three variables 
     unsigned int vertexShader, fragmentShader, shaderProgram;
     //Creates a vertex shader object and the variable 'vertexShader' is assigned to the vartex shader object. 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -163,14 +163,14 @@ int main(void)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    function();
+    calculatefunction();
 
     //Creates a VAO and binds it 
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    //Creates a VBO for the position and color to the graph
+    //Creates two VBO for the position and color to the graph
     unsigned int VBO[2];
     glGenBuffers(2, VBO);
 
@@ -182,7 +182,7 @@ int main(void)
 
     //Copies the color data for the graph to the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, spiralColors.size() * sizeof(float), spiralColors.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), colors.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
 
@@ -241,7 +241,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // Function f(x)= x^2
-double function(const double x)
+double function(double x)
 {
     return pow(x, 2);
 }
@@ -253,7 +253,7 @@ double differenceQuotient(double x)
     return (function(x + h) - function(x)) / h;
 }
 
-void function()
+void calculatefunction()
 {
     for (int i = 0; i < numberOfDataPoints; ++i)
     {   
@@ -282,9 +282,9 @@ void function()
         }
 
         //These three lines are used to store the calculated values for r, g, b and put in the end of the vector
-        spiralColors.push_back(red);
-        spiralColors.push_back(green);
-        spiralColors.push_back(blue);
+        colors.push_back(red);
+        colors.push_back(green);
+        colors.push_back(blue);
 
         file << "x: " << x << " y: " << " derivative: " << derivative << y << " r: "
             << red << " g: " << green << " b: " << blue << endl;
